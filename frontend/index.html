@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriPuls - Digital Twin for Climate Resilience</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; line-height: 1.6; color: #333; }
+        
+        /* Navigation */
+        nav { background: white; padding: 16px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        nav .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        nav .logo { font-size: 24px; font-weight: 700; color: #2ecc71; }
+        nav a { margin: 0 16px; text-decoration: none; color: #333; font-size: 14px; transition: color 0.2s; }
+        nav a:hover { color: #2ecc71; }
+        
+        /* Hero Section */
+        .hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 100px 20px; text-align: center; }
+        .hero .container { max-width: 1200px; margin: 0 auto; }
+        .hero h1 { font-size: 3.5rem; margin-bottom: 20px; font-weight: 700; }
+        .hero p { font-size: 1.3rem; margin-bottom: 30px; opacity: 0.9; }
+        .hero .cta-button { display: inline-block; background: #2ecc71; color: white; padding: 14px 32px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
+        .hero .cta-button:hover { background: #27ae60; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(46, 204, 113, 0.3); }
+        
+        /* Features Section */
+        .features { padding: 80px 20px; background: #f5f7fa; }
+        .features .container { max-width: 1200px; margin: 0 auto; }
+        .features h2 { font-size: 2.5rem; text-align: center; margin-bottom: 50px; color: #2c3e50; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .feature-card { background: white; padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .feature-card .icon { font-size: 2.5rem; margin-bottom: 16px; color: #2ecc71; }
+        .feature-card h3 { font-size: 1.2rem; margin-bottom: 12px; color: #2c3e50; }
+        .feature-card p { color: #888; font-size: 14px; }
+        
+        /* Testimonials */
+        .testimonials { padding: 80px 20px; background: white; }
+        .testimonials .container { max-width: 1200px; margin: 0 auto; }
+        .testimonials h2 { font-size: 2.5rem; text-align: center; margin-bottom: 50px; color: #2c3e50; }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .testimonial { background: #f9f9f9; padding: 24px; border-radius: 8px; border-left: 4px solid #2ecc71; }
+        .testimonial .stars { color: #f39c12; margin-bottom: 12px; }
+        .testimonial p { color: #555; margin-bottom: 16px; font-style: italic; }
+        .testimonial .author { font-weight: 600; color: #2c3e50; }
+        
+        /* Footer */
+        footer { background: #2c3e50; color: white; padding: 40px 20px; text-align: center; }
+        footer .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 1rem; }
+            .features h2, .testimonials h2 { font-size: 1.8rem; }
+            nav a { margin: 0 8px; }
+        }
+    </style>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">🌾 AgriPuls</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <a href="#features">Features</a>
+                <a href="#testimonials">Success Stories</a>
+                <div id="lang-switcher-index"></div>
+                <a href="login.html" style="background: #2ecc71; color: white !important; padding: 8px 16px; border-radius: 4px; text-decoration: none;">Login</a>
+                <a href="dashboard.html" style="background: #3498db; color: white !important; padding: 8px 16px; border-radius: 4px; text-decoration: none; margin-left: 8px;">Launch Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>🌾 AgriPuls Digital Twin</h1>
+            <p>Empowering Farmers with Climate-Resilient Agriculture</p>
+            <a href="dashboard.html" class="cta-button">Get Started Now →</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon">📍</div>
+                    <h3>Interactive Farm Mapping</h3>
+                    <p>Draw your farm boundary on a live map with satellite/terrain views and get precise area calculations in real-time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🧪</div>
+                    <h3>Soil Analysis Engine</h3>
+                    <p>Complete soil health assessment with NPK analysis, pH monitoring, and automated fertilizer recommendations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🌤️</div>
+                    <h3>Weather Intelligence</h3>
+                    <p>Real-time weather data integration with agricultural advisories tailored to your location and crop type.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🌱</div>
+                    <h3>Sowing Optimizer</h3>
+                    <p>AI-powered sowing date recommendations based on soil conditions and seasonal weather patterns.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">💧</div>
+                    <h3>Irrigation Planner</h3>
+                    <p>Smart irrigation schedule with drip, sprinkler, and flood techniques optimized for your soil profile.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🤖</div>
+                    <h3>AI Farmer Assistant</h3>
+                    <p>24/7 chatbot support for crop advice, pest management, and government scheme information in simple language.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2>Success Stories</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"Using AgriPuls's sowing optimizer, my soybean yield increased by 35% this season. The irrigation schedule saved me 40% water too!"</p>
+                    <div class="author">— Rajesh Patil, Nagpur</div>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"The chatbot answered my questions about soil pH adjustment in simple Marathi. No need to visit the KVK anymore. Brilliant!"</p>
+                    <div class="author">— Priya Sharma, Vidarbha</div>
+                </div>
+                <div class="testimonial">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"As a young farmer, AgriPuls gave me the confidence to manage 5 acres scientifically. Weather alerts also saved my cotton from hail damage."</p>
+                    <div class="author">— Arjun Singh, Indore</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AgriPuls Digital Twin. Empowering Indian Agriculture with Technology.</p>
+            <p style="font-size: 12px; margin-top: 12px;">Built for farmers. By farmers. For climate resilience.</p>
+        </div>
+    </footer>
+
+    <!-- Chatbot Script -->
+    <script src="assets/js/firebase-config.js"></script>
+    <script src="assets/js/firestore-operations.js"></script>
+    <script src="assets/js/firebase-auth.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/chatbot.js"></script>
+    <script>
+        // Initialize language switcher on index.html
+        document.addEventListener('DOMContentLoaded', () => {
+            const langSwitcher = document.getElementById('lang-switcher-index');
+            if (langSwitcher) {
+                langSwitcher.innerHTML = createLanguageSwitcher();
+            }
+        });
+    </script>
+</body>
+</html>

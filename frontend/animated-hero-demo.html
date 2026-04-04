@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Hero Demo - Sankalp</title>
+    
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="assets/css/design-system.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; 
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #f4f6f8 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .header h1 {
+            max-width: 1200px;
+            margin: 0 auto;
+            color: var(--color-brand-600);
+            font-size: 24px;
+        }
+        
+        #hero-container {
+            width: 100%;
+        }
+        
+        .controls {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .controls button {
+            padding: 8px 16px;
+            background: var(--color-brand-500);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .controls button:hover {
+            background: var(--color-brand-600);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .footer {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding: 20px;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .footer h3 {
+            color: var(--color-brand-600);
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+        
+        .footer code {
+            display: block;
+            background: #f4f6f8;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Animated Hero Component Demo</h1>
+    </div>
+
+    <!-- Hero Component Container -->
+    <div id="hero-container"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button onclick="pauseHero()">⏸ Pause</button>
+        <button onclick="resumeHero()">▶ Resume</button>
+        <button onclick="destroyHero()">🗑 Destroy</button>
+        <button onclick="initHero()">♻ Reinitialize</button>
+    </div>
+
+    <!-- Integration Guide -->
+    <div class="footer">
+        <h3>📚 Integration Guide</h3>
+        <p><strong>1. Include the script:</strong></p>
+        <code>&lt;script src="assets/js/animated-hero.js"&gt;&lt;/script&gt;</code>
+        
+        <p style="margin-top: 16px;"><strong>2. Create a container:</strong></p>
+        <code>&lt;div id="my-hero"&gt;&lt;/div&gt;</code>
+        
+        <p style="margin-top: 16px;"><strong>3. Initialize in your JavaScript:</strong></p>
+        <code>
+const hero = new AnimatedHero({
+  container: '#my-hero',
+  titles: ['amazing', 'new', 'wonderful'],
+  duration: 2000  // milliseconds
+});
+hero.init();
+
+// Add button callbacks (optional)
+hero.attachEventListeners({
+  onLaunchClick: () => console.log('Launch clicked'),
+  onCallClick: () => console.log('Call clicked'),
+  onSignupClick: () => console.log('Signup clicked')
+});
+        </code>
+
+        <p style="margin-top: 16px;"><strong>4. Available Methods:</strong></p>
+        <code>
+hero.pause()      // Pause title rotation
+hero.resume()     // Resume title rotation
+hero.destroy()    // Cleanup component
+        </code>
+
+        <p style="margin-top: 16px;"><strong>5. Dependencies:</strong></p>
+        <code>
+✅ design-system.css (for styling)
+✅ Font Awesome (for icons via &lt;i&gt; tags)
+✅ No external libraries needed (pure vanilla JS)
+        </code>
+    </div>
+
+    <!-- Animated Hero Script -->
+    <script src="assets/js/animated-hero.js"></script>
+
+    <!-- Initialize Hero -->
+    <script>
+        let heroInstance;
+
+        function initHero() {
+            if (heroInstance) {
+                heroInstance.destroy();
+            }
+
+            heroInstance = new AnimatedHero({
+                container: '#hero-container',
+                titles: ['amazing', 'new', 'wonderful', 'beautiful', 'smart'],
+                duration: 2000
+            });
+
+            heroInstance.init();
+
+            // Attach button callbacks
+            heroInstance.attachEventListeners({
+                onLaunchClick: () => {
+                    alert('Launch article clicked!');
+                },
+                onCallClick: () => {
+                    alert('Schedule call clicked!');
+                },
+                onSignupClick: () => {
+                    alert('Sign up clicked!');
+                }
+            });
+        }
+
+        function pauseHero() {
+            if (heroInstance) {
+                heroInstance.pause();
+                console.log('Hero paused');
+            }
+        }
+
+        function resumeHero() {
+            if (heroInstance) {
+                heroInstance.resume();
+                console.log('Hero resumed');
+            }
+        }
+
+        function destroyHero() {
+            if (heroInstance) {
+                heroInstance.destroy();
+                heroInstance = null;
+                console.log('Hero destroyed');
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initHero);
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Allow authenticated users to read/write their own farmer data
+    match /farmers/{uid} {
+      allow read, write: if request.auth.uid == uid;
+      
+      // Allow reading public farmer profile data for searches (optional)
+      allow read: if request.auth.uid != null;
+    }
+
+    // Allow authenticated users to read/write their own analytics
+    match /analytics/{uid} {
+      allow read, write: if request.auth.uid == uid;
+    }
+
+    // Allow authenticated users to read/write their own session data
+    match /sessions/{uid} {
+      allow read, write: if request.auth.uid == uid;
+    }
+
+    // Admin collection - only admins can access
+    match /admin/{document=**} {
+      allow read, write: if request.auth.token.admin == true;
+    }
+
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

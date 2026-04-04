@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "sankalp-digital-twin",
+    "production": "sankalp-digital-twin-prod"
+  },
+  "targets": {},
+  "etags": {}
+}

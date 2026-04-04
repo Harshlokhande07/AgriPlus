@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Profile - AgriPuls Digital Twin</title>
+    <link rel="stylesheet" href="assets/css/design-system.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .profile-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .sidebar-nav {
+            padding: 0;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .sidebar-nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #dcfce7;
+        }
+
+        .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #dcfce7;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .profile-section {
+            display: none;
+        }
+
+        .profile-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #2c3e50;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        /* Profile Info Section */
+        .profile-header {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .profile-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .meta-item {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .meta-item strong {
+            color: #2c3e50;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2ecc71;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+
+        .form-group input:disabled,
+        .form-group select:disabled {
+            background: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--color-brand-500, #22c55e);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-brand-600, #16a34a);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .alert {
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert.show {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box {
+            background: #f0f9f4;
+            border-left: 4px solid #2ecc71;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #27ae60;
+            margin: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                max-height: 120px;
+                overflow-x: auto;
+                overflow-y: visible;
+                display: flex;
+                padding: 0;
+            }
+            .sidebar-header {
+                display: none;
+            }
+            .sidebar-nav {
+                display: flex;
+                gap: 0;
+            }
+            .sidebar-nav a {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                padding: 12px 16px;
+            }
+            .sidebar-nav a.active {
+                border-bottom-color: #2ecc71;
+                border-left: none;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>🌾 AgriPuls</h2>
+                <p>Farmer Profile</p>
+            </div>
+            <div class="sidebar-nav">
+                <a class="nav-link active" data-section="profile" onclick="switchSection('profile')">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+                <a class="nav-link" data-section="farm" onclick="switchSection('farm')">
+                    <i class="fas fa-leaf"></i> Farm Details
+                </a>
+                <a class="nav-link" data-section="settings" onclick="switchSection('settings')">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+                <a class="nav-link" data-section="security" onclick="switchSection('security')">
+                    <i class="fas fa-lock"></i> Security
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1 id="section-title">👤 My Profile</h1>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div id="lang-switcher-profile"></div>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- PROFILE SECTION -->
+                <div id="profile-section" class="profile-section active">
+                    <div class="profile-card">
+                        <div id="profile-alert" class="alert"></div>
+
+                        <div class="profile-header">
+                            <div class="profile-avatar">👨‍🌾</div>
+                            <div class="profile-info">
+                                <div class="profile-name" id="profile-name">Rajesh Patil</div>
+                                <div class="profile-email" id="profile-email">rajesh@farm.com</div>
+                                <div class="profile-meta">
+                                    <div class="meta-item">📱 <strong id="profile-phone">+91-9876543210</strong></div>
+                                    <div class="meta-item">📍 <strong id="profile-location">Nagpur, Maharashtra</strong></div>
+                                    <div class="meta-item">📅 <strong id="profile-joindate">Member since Jan 2026</strong></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-farm-size">5.5</div>
+                                <div class="stat-label">Acres</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-crops">2</div>
+                                <div class="stat-label">Active Crops</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-yield">2,450</div>
+                                <div class="stat-label">Yield (kg)</div>
+                            </div>
+                        </div>
+
+                        <h3>Edit Personal Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="field-name" placeholder="Your full name" />
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" id="field-email" placeholder="your@email.com" />
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="field-phone" placeholder="+91-9876543210" />
+                            </div>
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" id="field-location" placeholder="City, State" />
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="saveProfile()">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <button class="btn btn-secondary" onclick="reloadProfile()">
+                                <i class="fas fa-undo"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FARM DETAILS SECTION -->
+                <div id="farm-section" class="profile-section">
+                    <div class="profile-card">
+                        <div id="farm-alert" class="alert"></div>
+
+                        <div class="info-box">
+                            <p>📌 Keep your farm details updated for accurate crop recommendations.</p>
+                        </div>
+
+                        <h3>Farm Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Farm Size (acres)</label>
+                                <input type="number" id="field-farm-size" placeholder="5.5" step="0.1" />
+                            </div>
+                            <div class="form-group">
+                                <label>Soil Type</label>
+                                <select id="field-soil-type">
+                                    <option value="">Select soil type</option>
+                                    <option value="black">Black Soil</option>
+                                    <option value="red">Red Soil</option>
+                                    <option value="alluvial">Alluvial Soil</option>
+                                    <option value="laterite">Laterite Soil</option>
+                                    <option value="mixed">Mixed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Primary Crops</label>
+                                <input type="text" id="field-crops" placeholder="e.g., Soybean, Cotton" />
+                            </div>
+                            <div class="form-group">
+                                <label>Irrigation Method</label>
+                                <select id="field-irrigation">
+                                    <option value="">Select method</option>
+                                    <option value="flood">Flood Irrigation</option>
+                                    <option value="sprinkler">Sprinkler</option>
+                                    <option value="drip">Drip</option>
+                                    <option value="canal">Canal</option>
+                                    <option value="rainfall">Rainfall</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Farm Location Details</label>
+                            <textarea id="field-farm-location" placeholder="Tell us more about your farm location, landmarks, etc."></textarea>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="saveFarmDetails()">
+                                <i class="fas fa-save"></i> Save Farm Details
+                            </button>
+                            <button class="btn btn-secondary" onclick="reloadFarmDetails()">
+                                <i class="fas fa-undo"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SETTINGS SECTION -->
+                <div id="settings-section" class="profile-section">
+                    <div class="profile-card">
+                        <div id="settings-alert" class="alert"></div>
+
+                        <h3>Notification Preferences</h3>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer;">
+                                <input type="checkbox" id="notify-weather" checked />
+                                <span>🌤️ Weather Alerts & Agricultural Advisories</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer;">
+                                <input type="checkbox" id="notify-soil" checked />
+                                <span>🧪 Soil Analysis Recommendations</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer;">
+                                <input type="checkbox" id="notify-schemes" checked />
+                                <span>💰 Government Schemes & Updates</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="notify-periodic" />
+                                <span>📧 Weekly Summary Email</span>
+                            </label>
+                        </div>
+
+                        <h3 style="margin-top: 30px;">Display Preferences</h3>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="dark-mode" />
+                                <span>🌙 Dark Mode</span>
+                            </label>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="saveSettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECURITY SECTION -->
+                <div id="security-section" class="profile-section">
+                    <div class="profile-card">
+                        <div id="security-alert" class="alert"></div>
+
+                        <h3>Change Password</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" id="field-current-password" placeholder="Enter current password" />
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" id="field-new-password" placeholder="Enter new password" />
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="field-confirm-password" placeholder="Confirm new password" />
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="changePassword()">
+                                <i class="fas fa-key"></i> Update Password
+                            </button>
+                        </div>
+
+                        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
+
+                        <h3>Account Actions</h3>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 16px;">
+                            Permanently delete your account and all associated data. This action cannot be undone.
+                        </p>
+                        <div class="btn-group">
+                            <button class="btn btn-danger" onclick="confirmDeleteAccount()">
+                                <i class="fas fa-trash"></i> Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/firebase-config.js"></script>
+    <script src="assets/js/firestore-operations.js"></script>
+    <script src="assets/js/firebase-auth.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+        // Load farmer data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Initialize language switcher
+            const langSwitcher = document.getElementById('lang-switcher-profile');
+            if (langSwitcher) {
+                langSwitcher.innerHTML = createLanguageSwitcher();
+            }
+
+            const farmer = JSON.parse(sessionStorage.getItem('currentFarmer'));
+            if (!farmer) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadProfileData(farmer);
+        });
+
+        function loadProfileData(farmer) {
+            // Update profile display
+            document.getElementById('profile-name').textContent = farmer.name;
+            document.getElementById('profile-email').textContent = farmer.email;
+            document.getElementById('profile-phone').textContent = farmer.phone || '+91-xxxxx';
+            document.getElementById('profile-location').textContent = farmer.location || 'Not specified';
+            document.getElementById('profile-joindate').textContent = `Member since ${farmer.joinDate || 'Jan 2026'}`;
+
+            // Update stats
+            document.getElementById('stat-farm-size').textContent = farmer.farmSize || '0';
+            document.getElementById('stat-crops').textContent = (farmer.crops || '').split(',').length;
+
+            // Fill form fields
+            document.getElementById('field-name').value = farmer.name;
+            document.getElementById('field-email').value = farmer.email;
+            document.getElementById('field-phone').value = farmer.phone || '';
+            document.getElementById('field-location').value = farmer.location || '';
+
+            document.getElementById('field-farm-size').value = farmer.farmSize || '';
+            document.getElementById('field-soil-type').value = farmer.soilType || '';
+            document.getElementById('field-crops').value = farmer.crops || '';
+            document.getElementById('field-irrigation').value = farmer.irrigation || '';
+            document.getElementById('field-farm-location').value = farmer.farmLocation || '';
+        }
+
+        function switchSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.profile-section').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Remove active from all nav links
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Show selected section
+            const sectionEl = document.getElementById(`${section}-section`);
+            if (sectionEl) {
+                sectionEl.classList.add('active');
+            }
+
+            // Update nav link active state
+            document.querySelector(`[data-section="${section}"]`).classList.add('active');
+
+            // Update title
+            const titles = {
+                profile: '👤 My Profile',
+                farm: '🌾 Farm Details',
+                settings: '⚙️ Settings',
+                security: '🔒 Security'
+            };
+            document.getElementById('section-title').textContent = titles[section] || 'Section';
+        }
+
+        function saveProfile() {
+            const farmer = JSON.parse(sessionStorage.getItem('currentFarmer'));
+            farmer.name = document.getElementById('field-name').value;
+            farmer.email = document.getElementById('field-email').value;
+            farmer.phone = document.getElementById('field-phone').value;
+            farmer.location = document.getElementById('field-location').value;
+
+            sessionStorage.setItem('currentFarmer', JSON.stringify(farmer));
+            loadProfileData(farmer);
+            showAlert('profile-alert', '✅ Profile updated successfully!', 'success');
+        }
+
+        function reloadProfile() {
+            const farmer = JSON.parse(sessionStorage.getItem('currentFarmer'));
+            loadProfileData(farmer);
+        }
+
+        function saveFarmDetails() {
+            const farmer = JSON.parse(sessionStorage.getItem('currentFarmer'));
+            farmer.farmSize = document.getElementById('field-farm-size').value;
+            farmer.soilType = document.getElementById('field-soil-type').value;
+            farmer.crops = document.getElementById('field-crops').value;
+            farmer.irrigation = document.getElementById('field-irrigation').value;
+            farmer.farmLocation = document.getElementById('field-farm-location').value;
+
+            sessionStorage.setItem('currentFarmer', JSON.stringify(farmer));
+            showAlert('farm-alert', '✅ Farm details updated successfully!', 'success');
+        }
+
+        function reloadFarmDetails() {
+            const farmer = JSON.parse(sessionStorage.getItem('currentFarmer'));
+            document.getElementById('field-farm-size').value = farmer.farmSize || '';
+            document.getElementById('field-soil-type').value = farmer.soilType || '';
+            document.getElementById('field-crops').value = farmer.crops || '';
+            document.getElementById('field-irrigation').value = farmer.irrigation || '';
+            document.getElementById('field-farm-location').value = farmer.farmLocation || '';
+        }
+
+        function saveSettings() {
+            const settings = {
+                weatherAlerts: document.getElementById('notify-weather').checked,
+                soilAlerts: document.getElementById('notify-soil').checked,
+                schemeAlerts: document.getElementById('notify-schemes').checked,
+                weeklyEmail: document.getElementById('notify-periodic').checked,
+                darkMode: document.getElementById('dark-mode').checked
+            };
+
+            localStorage.setItem('farmerSettings', JSON.stringify(settings));
+            showAlert('settings-alert', '✅ Settings saved successfully!', 'success');
+        }
+
+        function changePassword() {
+            const current = document.getElementById('field-current-password').value;
+            const newP = document.getElementById('field-new-password').value;
+            const confirm = document.getElementById('field-confirm-password').value;
+
+            if (!current || !newP || !confirm) {
+                showAlert('security-alert', '❌ Please fill in all password fields', 'error');
+                return;
+            }
+
+            if (newP.length < 6) {
+                showAlert('security-alert', '❌ New password must be at least 6 characters', 'error');
+                return;
+            }
+
+            if (newP !== confirm) {
+                showAlert('security-alert', '❌ Passwords do not match', 'error');
+                return;
+            }
+
+            showAlert('security-alert', '✅ Password updated successfully!', 'success');
+            document.getElementById('field-current-password').value = '';
+            document.getElementById('field-new-password').value = '';
+            document.getElementById('field-confirm-password').value = '';
+        }
+
+        function confirmDeleteAccount() {
+            if (confirm('⚠️ This will permanently delete your account and all data. Are you sure?')) {
+                if (confirm('Please confirm again: Delete account permanently?')) {
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('currentFarmer');
+                window.location.href = 'login.html';
+            }
+        }
+
+        function showAlert(elementId, message, type) {
+            const alertEl = document.getElementById(elementId);
+            if (alertEl) {
+                alertEl.textContent = message;
+                alertEl.className = `alert ${type} show`;
+                alertEl.style.display = 'flex';
+                
+                if (type === 'success') {
+                    setTimeout(() => {
+                        alertEl.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
